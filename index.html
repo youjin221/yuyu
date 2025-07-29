@@ -15,7 +15,7 @@
       margin: 0 auto;
       background: white;
       border: 2px solid hotpink;
-      touch-action: none; /* 터치 드래그 방지 */
+      touch-action: none; /* 모바일에서 스크롤 방지 */
     }
   </style>
 </head>
@@ -26,11 +26,11 @@
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
 
-    // 캔버스 크기
+    // 화면 크기 설정
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    // 플레이어 바
+    // 플레이어 바 객체
     const catcher = {
       width: 100,
       height: 20,
@@ -44,16 +44,19 @@
     const heartSize = 30;
     let score = 0;
 
+    // 하트 생성
     function createHeart() {
       const x = Math.random() * (canvas.width - heartSize);
       hearts.push({ x: x, y: -heartSize });
     }
 
+    // 바 그리기
     function drawCatcher() {
       ctx.fillStyle = catcher.color;
       ctx.fillRect(catcher.x, catcher.y, catcher.width, catcher.height);
     }
 
+    // 하트 그리기
     function drawHearts() {
       ctx.fillStyle = "red";
       hearts.forEach((heart) => {
@@ -63,6 +66,7 @@
       });
     }
 
+    // 하트 이동 및 충돌 처리
     function moveHearts() {
       hearts.forEach((heart, index) => {
         heart.y += 5;
@@ -77,19 +81,21 @@
           score++;
         }
 
-        // 바깥으로 벗어난 하트 제거
+        // 화면 밖으로 나가면 제거
         if (heart.y > canvas.height) {
           hearts.splice(index, 1);
         }
       });
     }
 
+    // 점수 표시
     function drawScore() {
       ctx.fillStyle = "black";
       ctx.font = "20px Arial";
       ctx.fillText("Score: " + score, 10, 30);
     }
 
+    // 게임 루프
     function gameLoop() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       drawCatcher();
@@ -99,14 +105,21 @@
       requestAnimationFrame(gameLoop);
     }
 
-    // 모바일 터치 조작
+    // ✅ 모바일 터치 조작
     canvas.addEventListener("touchmove", function (e) {
       const rect = canvas.getBoundingClientRect();
       const touchX = e.touches[0].clientX - rect.left;
       catcher.x = touchX - catcher.width / 2;
     });
 
-    // 하트 생성 주기
+    // ✅ PC 마우스 조작
+    canvas.addEventListener("mousemove", function (e) {
+      const rect = canvas.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      catcher.x = mouseX - catcher.width / 2;
+    });
+
+    // 하트 생성 간격
     setInterval(createHeart, 1000);
 
     gameLoop();
