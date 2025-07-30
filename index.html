@@ -19,7 +19,8 @@
     }
     #fadeOverlay {
       position: fixed;
-      top: 0; left: 0;
+      top: 0;
+      left: 0;
       width: 100vw;
       height: 100vh;
       background: black;
@@ -108,14 +109,12 @@
       requestAnimationFrame(gameLoop);
     }
 
-    // 모바일 터치 이동
     canvas.addEventListener("touchmove", function (e) {
       const rect = canvas.getBoundingClientRect();
       const touchX = e.touches[0].clientX - rect.left;
       catcher.x = touchX - catcher.width / 2;
     });
 
-    // PC 마우스 이동
     document.addEventListener("mousemove", function (e) {
       const rect = canvas.getBoundingClientRect();
       const mouseX = e.clientX - rect.left;
@@ -127,7 +126,6 @@
       gameLoop();
     }
 
-    // 암전 효과 + 게임 시작
     window.onload = () => {
       const overlay = document.getElementById('fadeOverlay');
       overlay.style.opacity = '0';
