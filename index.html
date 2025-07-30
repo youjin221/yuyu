@@ -2,7 +2,9 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>하트 받기 게임</title>
   <style>
     html, body {
@@ -10,24 +12,21 @@
       padding: 0;
       overflow: hidden;
       background: #f0f0f0;
-      height: 100%;
       touch-action: none;
     }
     canvas {
       display: block;
-      margin: 0 auto;
       background: white;
       border: 2px solid hotpink;
     }
     #fadeOverlay {
       position: fixed;
-      top: 0;
-      left: 0;
+      top: 0; left: 0;
       width: 100vw;
       height: 100vh;
       background: black;
-      z-index: 9999;
       opacity: 1;
+      z-index: 9999;
       transition: opacity 1.5s ease;
       pointer-events: none;
     }
@@ -45,18 +44,17 @@
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     }
-
-    window.addEventListener("resize", resizeCanvas);
     resizeCanvas();
+    setTimeout(resizeCanvas, 100); // Safari 대응
+    window.addEventListener("resize", resizeCanvas);
 
     const catcher = {
       width: 100,
       height: 20,
       x: canvas.width / 2 - 50,
-      y: canvas.height - 60,
+      y: canvas.height - 50,
       color: "hotpink"
     };
-
     const hearts = [];
     const heartSize = 30;
     let score = 0;
@@ -110,15 +108,13 @@
       requestAnimationFrame(gameLoop);
     }
 
+    // 터치 및 마우스 조작
     canvas.addEventListener("touchmove", function (e) {
-      const rect = canvas.getBoundingClientRect();
-      const touchX = e.touches[0].clientX - rect.left;
+      const touchX = e.touches[0].clientX;
       catcher.x = touchX - catcher.width / 2;
-    }, { passive: false });
-
+    });
     document.addEventListener("mousemove", function (e) {
-      const rect = canvas.getBoundingClientRect();
-      const mouseX = e.clientX - rect.left;
+      const mouseX = e.clientX;
       catcher.x = mouseX - catcher.width / 2;
     });
 
@@ -127,15 +123,15 @@
       gameLoop();
     }
 
-    window.addEventListener("load", () => {
-      const overlay = document.getElementById('fadeOverlay');
-      overlay.style.opacity = '0';
+    // 암전 해제 및 게임 시작 (Safari 대응)
+    document.addEventListener("DOMContentLoaded", () => {
+      const overlay = document.getElementById("fadeOverlay");
+      overlay.style.opacity = "0";
       setTimeout(() => {
-        overlay.style.display = 'none';
+        overlay.style.display = "none";
         startGame();
       }, 1500);
     });
   </script>
 </body>
 </html>
-
