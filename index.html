@@ -2,13 +2,15 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
   <title>하트 받기 게임</title>
   <style>
-    body {
+    html, body {
       margin: 0;
+      padding: 0;
       overflow: hidden;
       background: #f0f0f0;
+      height: 100%;
       touch-action: none;
     }
     canvas {
@@ -19,13 +21,14 @@
     }
     #fadeOverlay {
       position: fixed;
-      top: 0; left: 0;
+      top: 0;
+      left: 0;
       width: 100vw;
       height: 100vh;
       background: black;
+      z-index: 9999;
       opacity: 1;
       transition: opacity 1.5s ease;
-      z-index: 9999;
       pointer-events: none;
     }
   </style>
@@ -37,8 +40,14 @@
   <script>
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
 
     const catcher = {
       width: 100,
@@ -101,14 +110,12 @@
       requestAnimationFrame(gameLoop);
     }
 
-    // 모바일 터치
     canvas.addEventListener("touchmove", function (e) {
       const rect = canvas.getBoundingClientRect();
       const touchX = e.touches[0].clientX - rect.left;
       catcher.x = touchX - catcher.width / 2;
-    });
+    }, { passive: false });
 
-    // PC 마우스
     document.addEventListener("mousemove", function (e) {
       const rect = canvas.getBoundingClientRect();
       const mouseX = e.clientX - rect.left;
@@ -120,16 +127,14 @@
       gameLoop();
     }
 
-    window.onload = () => {
-      const overlay = document.getElementById("fadeOverlay");
-      overlay.style.opacity = "0";
-
-      // 암전 해제 후 게임 시작
+    window.addEventListener("load", () => {
+      const overlay = document.getElementById('fadeOverlay');
+      overlay.style.opacity = '0';
       setTimeout(() => {
-        overlay.style.display = "none";
+        overlay.style.display = 'none';
         startGame();
-      }, 1500); // transition 시간과 일치해야 함
-    };
+      }, 1500);
+    });
   </script>
 </body>
 </html>
