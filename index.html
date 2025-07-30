@@ -2,8 +2,8 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>하트 받기 게임 (암전 연출 포함)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>하트 받기 게임</title>
   <style>
     body {
       margin: 0;
@@ -17,7 +17,6 @@
       border: 2px solid hotpink;
       touch-action: none;
     }
-    /* 암전 레이어 스타일 */
     #fadeOverlay {
       position: fixed;
       top: 0; left: 0;
@@ -32,18 +31,21 @@
   </style>
 </head>
 <body>
-  <!-- 암전용 레이어 -->
   <div id="fadeOverlay"></div>
-
-  <!-- 게임 캔버스 -->
   <canvas id="gameCanvas"></canvas>
 
   <script>
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
 
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      catcher.y = canvas.height - 50;
+    }
+
+    window.addEventListener("resize", resizeCanvas);
+    resizeCanvas();
 
     const catcher = {
       width: 100,
@@ -52,6 +54,7 @@
       y: canvas.height - 50,
       color: "hotpink"
     };
+
     const hearts = [];
     const heartSize = 30;
     let score = 0;
@@ -60,10 +63,12 @@
       const x = Math.random() * (canvas.width - heartSize);
       hearts.push({ x: x, y: -heartSize });
     }
+
     function drawCatcher() {
       ctx.fillStyle = catcher.color;
       ctx.fillRect(catcher.x, catcher.y, catcher.width, catcher.height);
     }
+
     function drawHearts() {
       hearts.forEach((heart) => {
         ctx.beginPath();
@@ -72,6 +77,7 @@
         ctx.fill();
       });
     }
+
     function moveHearts() {
       hearts.forEach((heart, index) => {
         heart.y += 5;
@@ -86,11 +92,13 @@
         if (heart.y > canvas.height) hearts.splice(index, 1);
       });
     }
+
     function drawScore() {
       ctx.fillStyle = "black";
       ctx.font = "20px Arial";
       ctx.fillText("Score: " + score, 10, 30);
     }
+
     function gameLoop() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       drawCatcher();
@@ -100,13 +108,14 @@
       requestAnimationFrame(gameLoop);
     }
 
-    // 모바일 터치 지원
+    // 모바일 터치 이동
     canvas.addEventListener("touchmove", function (e) {
       const rect = canvas.getBoundingClientRect();
       const touchX = e.touches[0].clientX - rect.left;
       catcher.x = touchX - catcher.width / 2;
     });
-    // PC 마우스 지원 (document 기준)
+
+    // PC 마우스 이동
     document.addEventListener("mousemove", function (e) {
       const rect = canvas.getBoundingClientRect();
       const mouseX = e.clientX - rect.left;
@@ -118,17 +127,18 @@
       gameLoop();
     }
 
-    // 암전 효과: 페이지 로드 후 게임 시작
+    // 암전 효과 + 게임 시작
     window.onload = () => {
       const overlay = document.getElementById('fadeOverlay');
       overlay.style.opacity = '0';
       setTimeout(() => {
         overlay.style.display = 'none';
         startGame();
-      }, 3000);
+      }, 1500);
     };
   </script>
 </body>
 </html>
+
 
 
